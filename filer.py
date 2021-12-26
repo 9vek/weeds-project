@@ -1,29 +1,28 @@
-from os import listdir, walk
-from os.path import isfile, join, sep
+import os
+import os.path as osp
+from pathlib import Path
 
-ignore_files = [
-  'desktop.ini'
-]
+def list_files(path, ignore_files):
+  path = Path(path)
+  files = list(path.glob('*'))
 
-def list_files(path: str):
-  path.replace('/', sep)
-  files = [
-    f for f in listdir(path) if isfile(join(path, f))
-  ]
+  for file in files:
 
-  for file in ignore_files:
-    if file in files:
+    if file.is_dir():
       files.remove(file)
+
+    for ifile in ignore_files:
+      if file.match(ifile):
+        files.remove(file)
 
   return files
 
 
-def list_files_r(path: str):
-  path.replace('/', sep)
-  files = next(walk(path), (None, None, []))[2]
+def list_files_r(path: str, ignore_files):
+  path.replace('/', osp.sep)
+  files = next(osp.walk(path), (None, None, []))[2]
 
   for file in ignore_files:
-    
     if file in files:
       files.remove(file)
 
